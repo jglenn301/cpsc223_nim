@@ -1,16 +1,20 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <stdbool.h>
 
 /**
- * Reads a Nim game state from standard input.  The size of each pile
- * should be readable as the next input and will be stored in the
- * given array.  If there are missing values then they are filled with
- * zeros.
+ * Reads a Nim game state from standard input.  The number of piles
+ * should be the first value to read and will be stored in the
+ * reference argument.  The size of each pile should follow and will
+ * be stored in an array returned as the return value.  It is the caller's
+ * responsibility to free that array.  If there are missing values then
+ * they are filled with zeros.  If the array can't be allocated then
+ * the return value is null and the number of piles is set to 0.
  *
- * @param num_piles a non-negative integer
- * @param a pointer to an array of that man unsigned integers
+ * @param num_piles a pointer to an unsigned int, non-NULL
+ * @return an array whose size is the value stored in num_piles, or NULL
  */
-void read_game(size_t num_piles, unsigned int pile_size[]);
+unsigned int *read_game(size_t *num_piles);
 
 
 /**
@@ -64,15 +68,13 @@ bool is_bit_set(unsigned int num, unsigned int b);
 int main()
 {
   size_t num_piles;
-  fscanf(stdin, "%zu", &num_piles);
+  unsigned int *pile_size = read_game(&num_piles);
+
   if (num_piles == 0)
     {
       fprintf(stdout, "GAME OVER\n");
       return 0;
     }
-     
-  unsigned int pile_size[num_piles];
-  read_game(num_piles, pile_size);
 
   size_t take_row;
   unsigned int take_count;
@@ -93,6 +95,8 @@ int main()
 	}
     }   
   
+  free(pile_size);
+
   return 0;
 }
 
@@ -143,21 +147,34 @@ size_t find_max(size_t size, unsigned int arr[])
 }
 
 
-void read_game(size_t num_piles, unsigned int pile_size[])
+unsigned int *read_game(size_t *num_piles)
 {
+  // read number of piles
+  fscanf(stdin, "%zu", num_piles);
+
+  unsigned int pile_size[*num_piles]; // BROKEN -- doesn't survive the return
+  if (pile_size == NULL)
+    {
+      // couldn't create the array
+      *num_piles = 0;
+      return NULL;
+    }
+
   // read each pile size
   size_t i = 0;
-  while (i < num_piles && fscanf(stdin, "%u", &pile_size[i]) == 1)
+  while (i < *num_piles && fscanf(stdin, "%u", &pile_size[i]) == 1)
     {
       i++;
     }
   
   // fill in any missing values with 0
-  while (i < num_piles)
+  while (i < *num_piles)
     {
       pile_size[i] = 0;
       i++;
     }
+  
+  return pile_size;  // BROKEN -- can't return ptr to stack-allocated array
 }
 
 
