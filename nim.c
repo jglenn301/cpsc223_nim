@@ -152,7 +152,8 @@ unsigned int *read_game(size_t *num_piles)
   // read number of piles
   fscanf(stdin, "%zu", num_piles);
 
-  unsigned int pile_size[*num_piles]; // BROKEN -- doesn't survive the return
+  // allocate space on heap for array of pile sizes
+  unsigned int *pile_size = malloc(sizeof(unsigned int) * *num_piles);
   if (pile_size == NULL)
     {
       // couldn't create the array
@@ -174,7 +175,7 @@ unsigned int *read_game(size_t *num_piles)
       i++;
     }
   
-  return pile_size;  // BROKEN -- can't return ptr to stack-allocated array
+  return pile_size;  // FIXED -- array on heap survives end of function!
 }
 
 
