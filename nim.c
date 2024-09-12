@@ -1,15 +1,14 @@
 #include <stdio.h>
-#include <stdlib.h>
 #include <stdbool.h>
 
 /**
  * Reads a Nim game state from standard input.  The number of piles
  * should be the first value to read and will be stored in the
  * reference argument.  The size of each pile should follow and will
- * be stored in an array returned as the return value.  It is the caller's
- * responsibility to free that array.  If there are missing values then
- * they are filled with zeros.  If the array can't be allocated then
- * the return value is null and the number of piles is set to 0.
+ * be stored in an array returned as the return value. If there are
+ * missing values then they are filled with zeros.  If the array can't
+ * be allocated then the return value is null and the number of piles
+ * is set to 0.
  *
  * @param num_piles a pointer to an unsigned int, non-NULL
  * @return an array whose size is the value stored in num_piles, or NULL
@@ -95,8 +94,6 @@ int main()
 	}
     }   
   
-  free(pile_size);
-
   return 0;
 }
 
@@ -153,12 +150,6 @@ unsigned int *read_game(size_t *num_piles)
   fscanf(stdin, "%zu", num_piles);
 
   unsigned int pile_size[*num_piles]; // BROKEN -- doesn't survive the return
-  if (pile_size == NULL)
-    {
-      // couldn't create the array
-      *num_piles = 0;
-      return NULL;
-    }
 
   // read each pile size
   size_t i = 0;
