@@ -63,7 +63,14 @@ bool is_bit_set(unsigned int num, unsigned int b);
 
 int main()
 {
-  const size_t num_piles = 3;
+  size_t num_piles;
+  fscanf(stdin, "%zu", &num_piles);
+  if (num_piles == 0)
+    {
+      fprintf(stdout, "GAME OVER\n");
+      return 0;
+    }
+     
   unsigned int pile_size[num_piles];
   read_game(num_piles, pile_size);
 
