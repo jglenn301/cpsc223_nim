@@ -149,11 +149,11 @@ size_t find_max(size_t size, unsigned int arr[])
 
 unsigned int *read_game(size_t *num_piles)
 {
-  // read number of piles
-  fscanf(stdin, "%zu", num_piles);
+  size_t max_piles = 8;
+  size_t pile_count = 0;
 
   // allocate space on heap for array of pile sizes
-  unsigned int *pile_size = malloc(sizeof(unsigned int) * *num_piles);
+  unsigned int *pile_size = malloc(sizeof(unsigned int) * max_piles);
   if (pile_size == NULL)
     {
       // couldn't create the array
@@ -162,20 +162,36 @@ unsigned int *read_game(size_t *num_piles)
     }
 
   // read each pile size
-  size_t i = 0;
-  while (i < *num_piles && fscanf(stdin, "%u", &pile_size[i]) == 1)
+  unsigned int pile;
+  while (fscanf(stdin, "%u", &pile) == 1)
     {
-      i++;
+      if (max_piles == pile_count)
+	{
+	  max_piles *= 2;
+	  unsigned int *bigger = malloc(sizeof(*bigger) * max_piles);
+	  if (bigger != NULL)
+	    {
+	      for (size_t i = 0; i < pile_count; i++)
+		{
+		  bigger[i] = pile_size[i];
+		}
+	      free(pile_size);
+	      pile_size = bigger;
+	    }
+	  else
+	    {
+	      // couldn't make bigger array; just quit with what we've read
+	      *num_piles = pile_count;
+	      return pile_size;
+	    }
+	}
+
+      pile_size[pile_count] = pile;
+      pile_count++;
     }
   
-  // fill in any missing values with 0
-  while (i < *num_piles)
-    {
-      pile_size[i] = 0;
-      i++;
-    }
-  
-  return pile_size;  // FIXED -- array on heap survives end of function!
+  *num_piles = pile_count;
+  return pile_size;
 }
 
 
