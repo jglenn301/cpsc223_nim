@@ -168,14 +168,9 @@ unsigned int *read_game(size_t *num_piles)
       if (max_piles == pile_count)
 	{
 	  max_piles *= 2;
-	  unsigned int *bigger = malloc(sizeof(*bigger) * max_piles);
+	  unsigned int *bigger = realloc(pile_size, sizeof(*bigger) * max_piles);
 	  if (bigger != NULL)
 	    {
-	      for (size_t i = 0; i < pile_count; i++)
-		{
-		  bigger[i] = pile_size[i];
-		}
-	      free(pile_size);
 	      pile_size = bigger;
 	    }
 	  else
